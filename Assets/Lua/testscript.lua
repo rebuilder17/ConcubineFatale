@@ -1,4 +1,6 @@
--- EMPTY
-
-print "BOO!"
-print "BOO! 2"
+return function()
+	print "BOO!"
+	csharpfunc()
+	coroutine.yield()
+	print "BOO! 2"
+end
