@@ -17,3 +17,18 @@ FactionScriptList =
 {
 	'Faction/faction_test'
 }
+
+-- 활동 스크립트 배열
+ActivityScriptList =
+{
+}
+
+-- 아이템 스크립트 배열
+ItemScriptList =
+{
+}
+
+-- 이벤트 스크립트 배열
+EventScriptList =
+{
+}

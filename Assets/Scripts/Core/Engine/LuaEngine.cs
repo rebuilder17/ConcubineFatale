@@ -118,6 +118,10 @@ namespace CFCore
 		const string		c_field_individualScripts	= "IndividualScriptList";	// 필드명 - 인물 스크립트 경로 목록
 		const string		c_field_factionScripts		= "FactionScriptList";		// 필드명 - 세력 스크립트 경로 목록
 
+		const string		c_field_activityScripts		= "ActivityScriptList";		// 필드명 - 활동 스크립트 경로 목록
+		const string		c_field_itemScripts			= "ItemScriptList";			// 필드명 - 아이템 스크립트 경로 목록
+		const string		c_field_eventScripts		= "EventScriptList";		// 필드명 - 이벤트 스크립트 경로 목록
+
 
 		// Static
 		static LuaEngine	s_instance;
@@ -140,6 +144,9 @@ namespace CFCore
 		ScriptTable					m_tableEmperor;
 		ScriptTableList				m_tableIndivdualList;
 		ScriptTableList				m_tableFactionList;
+		ScriptTableList				m_tableActivityList;
+		ScriptTableList				m_tableItemList;
+		ScriptTableList				m_tableEventList;
 
 		Table						m_gameTable;			// 게임 오브젝트 (UserData) 테이블
 
@@ -168,6 +175,24 @@ namespace CFCore
 		public IScriptTableList factionTableList
 		{ get { return m_tableFactionList; } }
 
+		/// <summary>
+		/// 활동 Lua 테이블 목록
+		/// </summary>
+		public IScriptTableList activityTableList
+		{ get { return m_tableActivityList; } }
+
+		/// <summary>
+		/// 아이템 Lua 테이블 목록
+		/// </summary>
+		public IScriptTableList itemTableList
+		{ get { return m_tableItemList; } }
+
+		/// <summary>
+		/// 이벤트 Lua 테이블 목록
+		/// </summary>
+		public IScriptTableList eventTableList
+		{ get { return m_tableEventList; } }
+
 
 		/// <summary>
 		/// 초기화
@@ -189,6 +214,10 @@ namespace CFCore
 				m_tableEmperor			= LoadSingleScriptTable(c_field_emperorScript);
 				m_tableIndivdualList	= LoadScriptTableArray(c_field_individualScripts);
 				m_tableFactionList		= LoadScriptTableArray(c_field_factionScripts);
+
+				m_tableActivityList		= LoadScriptTableArray(c_field_activityScripts);
+				m_tableItemList			= LoadScriptTableArray(c_field_itemScripts);
+				m_tableEventList		= LoadScriptTableArray(c_field_eventScripts);
 
 				m_gameTable				= DynValue.NewTable(m_engine).Table;	// 게임 오브젝트 테이블
 				m_engine.Globals["Game"]	= m_gameTable;
@@ -245,7 +274,23 @@ namespace CFCore
 		}
 
 
-
+		/// <summary>
+		/// 함수 객체 호출. 에러 핸들링을 한다.
+		/// </summary>
+		/// <param name="function"></param>
+		/// <param name="paramlist"></param>
+		public DynValue CallFunctionSafe(DynValue function, params DynValue[] paramlist)
+		{
+			try
+			{
+				return m_engine.Call(function, paramlist);
+			}
+			catch (ScriptRuntimeException ex)
+			{
+				HandleScriptError(ex);
+				return DynValue.NewNil();
+			}
+		}
 
 		static void HandleScriptError(ScriptRuntimeException ex)
 		{
